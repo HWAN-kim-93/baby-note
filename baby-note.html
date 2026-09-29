@@ -576,7 +576,7 @@ function refreshProfiles(ids){if(!usr||!ids.length)return;usr.profiles(ids).then
 function levelText(){if(!usr)return mode==="db"?"권한 정보를 확인할 수 없어요":"이 브라우저에만 저장하는 모드예요";
   if(U.owner)return "소유자 · 기록, 가족 명단, 공유 설정 모두 가능";
   if(U.edit)return "편집자(Editor) · 기록과 가족 명단 관리 가능";
-  if(U.write===true)return "기여자(Contributor) · 기록·한마디 쓰기 가능";
+  if(U.write===true)return "기록·한마디 쓰기 가능";
   if(U.write===false)return "보기 전용 · 기록을 볼 수만 있어요";
   return "권한 정보를 받지 못했어요 · 기록을 저장해 보면 알 수 있어요"}
 function avatar(src){return src?'<img class="av" src="'+esc(src)+'" alt="">':'<span class="av"></span>'}
@@ -598,10 +598,10 @@ function familyView(){var list=famList(),mine=myFam(),ids=list.map(function(x){r
    '<div class="stack"><section class="card"><h2>편집할 수 있는 사람 추가·해제</h2><ol class="steps">'+
    "<li>이 페이지를 연 화면 위쪽의 <b>공유(Share)</b> 메뉴를 열어요. 소유자와 편집자만 열 수 있어요.</li>"+
    "<li>가족을 이메일로 초대하고 권한을 골라요.<ul>"+
-   "<li><b>Contributor</b> · 기록·한마디 쓰기, 명단에 자기 등록 (엄마·아빠에게 추천)</li>"+
-   "<li><b>Editor</b> · 위 기능 + 가족 명단 관리</li>"+
-   "<li><b>Viewer · Commenter</b> · 보기만 가능 (조부모님께 보여 드릴 때)</li></ul></li>"+
-   "<li>초대받은 사람이 링크를 열고 이 화면에서 엄마/아빠/가족으로 등록해요.</li>"+
+   "<li><b>Editor</b> · 기록·한마디 쓰기와 가족 명단 관리 (엄마·아빠는 꼭 이 권한으로)</li>"+
+   "<li><b>Viewer</b> · 보기만 가능 (조부모님께 보여 드릴 때)</li></ul></li>"+
+   "<li><b>\"링크가 있는 모든 사람\" 공개는 켜지 마세요.</b> 켜면 이메일로 초대한 가족도 보기 전용이 돼요.</li>"+
+   "<li>초대한 사람에게 <a href=\"https://claude.ai/artifact/YPLDKPJq12ezuN5S9oDumh\" target=\"_blank\" rel=\"noopener\">처음 쓰는 가족용 안내문</a>을 보내요. 로그인하고 이 화면에서 엄마/아빠/가족으로 등록하는 방법이 나와 있어요.</li>"+
    "<li>권한을 바꾸거나 없앨 때도 같은 공유 메뉴에서 해요.</li></ol>"+
    '<div class="info" style="margin-top:12px">보안을 위해 실제 접근 권한은 claude.ai 공유 메뉴에서만 바꿀 수 있어요. 이 페이지는 가족 명단과 각자의 권한 상태를 보여 줘요.</div></section></div></div></div>'}
 function famSheet(id){var x=(S.family||{})[id];if(!x)return;var p=PF[id]||{},isMe=id===U.id;

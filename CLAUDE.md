@@ -7,7 +7,8 @@
 - 게시된 Artifact: https://claude.ai/artifact/Pe2P3sSQErBeAo75q2mvt4
 - 수정 후 반드시 **같은 URL로 재게시**한다 (`Artifact` publish에 `url` 지정). 새 대화에서는 publish 전에 `action: "read"`로 현재 버전을 먼저 읽고, 로컬 파일과 다르면 게시된 버전을 기준으로 맞춘다.
 - `capabilities`는 `{db:{rules:[{path:"family",read:"view",write:"admin"},{path:"family/{self}",write:"interact"}]}, downloads:true, user:{scopes:["profile"]}}`. 재게시 때는 생략해서 유지한다(바꿀 때만 전체를 다시 지정).
-- 실제 편집 권한은 claude.ai 공유 메뉴(Contributor=기록 쓰기, Editor=명단 관리)로만 바뀐다. 앱의 가족 화면은 명단·역할과 내 권한 상태만 다룬다.
+- 실제 편집 권한은 claude.ai 공유 메뉴로만 바뀐다. 개인 계정이라 가족은 조직 밖 사람 → **이메일로 Editor 초대**해야 쓰기 가능(Contributor·Viewer는 보기만), "링크가 있는 모든 사람" 공개를 켜면 외부 Editor도 보기 전용이 된다. 앱의 가족 화면은 명단·역할과 내 권한 상태만 다룬다.
+- 가족용 시작 안내문: `guide.html` → https://claude.ai/artifact/YPLDKPJq12ezuN5S9oDumh (정적 페이지, capabilities 없음). PDF 사본 `행복이-육아수첩-시작-안내.pdf`.
 - 페이지 앞부분의 `<title>행복이 육아수첩</title>`, 아이콘(baby)은 유지.
 - 탭 순서: 한마디 → 홈 → 기록 → 통계·성장 → 접종·검진 → 출산 준비. 가족 화면(tab `family`)은 상단 "가족" 버튼으로 연다.
 
