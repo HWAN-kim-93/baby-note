@@ -1,4 +1,4 @@
-<title>우리 아기 육아수첩</title>
+<title>행복이 육아수첩</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
@@ -79,7 +79,7 @@ main{min-width:0}
   display:flex;flex-direction:column;align-items:center;gap:6px;font-size:.86rem;font-weight:500;min-height:74px;justify-content:center}
 .qa i{width:12px;height:12px;border-radius:50%;background:var(--c)}
 .qa:active{transform:scale(.97)}
-.c-mom{--c:var(--mom)}.c-dad{--c:var(--dad)}.c-feed{--c:var(--feed)}.c-diaper{--c:var(--diaper)}.c-sleep{--c:var(--sleep)}.c-care{--c:var(--care)}.c-muted{--c:var(--muted)}
+.c-mom{--c:var(--mom)}.c-dad{--c:var(--dad)}.c-family{--c:var(--accent)}.c-feed{--c:var(--feed)}.c-diaper{--c:var(--diaper)}.c-sleep{--c:var(--sleep)}.c-care{--c:var(--care)}.c-muted{--c:var(--muted)}
 
 /* timers */
 .timer{--c:var(--feed);border:2px solid var(--c);background:color-mix(in srgb,var(--c) 10%,var(--surface));border-radius:var(--r);padding:14px 16px;display:grid;gap:10px}
@@ -186,6 +186,21 @@ td:first-child{font-family:var(--f-body)}
 .lstat span{font-size:.8rem;font-weight:600;padding:3px 10px;border-radius:999px;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c)}
 .lstat span.no{background:var(--surface2);color:var(--muted)}
 
+/* family */
+.mems{list-style:none;margin:0;padding:0}
+.mems li{border-top:1px solid var(--line)}
+.mems li:first-child{border-top:0}
+.mem{width:100%;display:flex;align-items:center;gap:12px;padding:10px 0;text-align:left;min-width:0}
+.mem .who2{flex:1;min-width:0}
+.mem .who2 b{display:block;font-weight:600;overflow-wrap:anywhere}
+.mem .who2 b small{color:var(--muted);font-weight:500;font-size:.8rem}
+.mem .who2 .sub{display:block;font-size:.82rem;color:var(--muted)}
+.av{flex:none;width:40px;height:40px;border-radius:50%;background:var(--surface2);object-fit:cover}
+.rp{flex:none;font-size:.8rem;font-weight:600;padding:3px 10px;border-radius:999px;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c)}
+.steps{margin:0;padding-left:20px;display:grid;gap:10px;font-size:.9rem}
+.steps ul{margin:6px 0 0;padding-left:16px;display:grid;gap:4px;color:var(--muted)}
+.steps ul b{color:var(--fg)}
+
 /* sheet */
 .sheet{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center}
 .sheet .scrim{position:absolute;inset:0;background:rgba(0,0,0,.42)}
@@ -214,14 +229,15 @@ td:first-child{font-family:var(--f-body)}
 
 <div class="app">
   <header class="top">
-    <div class="who"><h1 id="babyName">우리 아기</h1><p id="babyAge">출산 예정일을 입력해 주세요</p></div>
+    <div class="who"><h1 id="babyName">행복이</h1><p id="babyAge">출산 예정일을 입력해 주세요</p></div>
     <button class="iconbtn" id="nightBtn" aria-pressed="false" title="밤중 수유용 어두운 화면">야간</button>
+    <button class="iconbtn" id="familyBtn">가족</button>
     <button class="iconbtn" id="profileBtn">설정</button>
   </header>
   <nav class="tabs" id="tabs" aria-label="메뉴">
+    <button data-tab="letter">한마디</button>
     <button data-tab="home">홈</button>
     <button data-tab="log">기록</button>
-    <button data-tab="letter">한마디</button>
     <button data-tab="stats">통계·성장</button>
     <button data-tab="plan">접종·검진</button>
     <button data-tab="prep">출산 준비</button>
@@ -235,10 +251,11 @@ td:first-child{font-family:var(--f-body)}
 (function(){
 "use strict";
 var MIN=60000, HOUR=3600000, DAYMS=86400000;
-var S={profile:{},timers:{},days:{},growth:{items:{}},vax:{done:{}},prep:{done:{},custom:{}},letters:{}};
-var db=null, dl=null, mode="local", tab="home", logDay=ymd(Date.now());
+var S={profile:{},timers:{},days:{},growth:{items:{}},vax:{done:{}},prep:{done:{},custom:{}},letters:{},family:{}};
+var db=null, dl=null, mode="local", tab="letter", logDay=ymd(Date.now());
 try{var t0=localStorage.getItem("bn-tab"); if(t0) tab=t0;}catch(e){}
-var me="mom",draft="",letterLimit=60;
+var me="mom",meTouched=false,draft="",letterLimit=60;
+var usr=null,U={id:null,name:"",avatar:"",owner:false,edit:false,write:null},PF={},pfKey="";
 try{var m0=localStorage.getItem("bn-me"); if(m0==="dad"||m0==="mom") me=m0; draft=localStorage.getItem("bn-draft")||"";}catch(e){}
 try{var th=localStorage.getItem("bn-night"); if(th==="1") setNight(true);}catch(e){}
 
@@ -275,6 +292,7 @@ function setNight(on){var r=document.documentElement;if(on)r.setAttribute("data-
 function localSave(){try{localStorage.setItem("bn-data",JSON.stringify(S))}catch(e){}}
 function localLoad(){try{var s=JSON.parse(localStorage.getItem("bn-data")||"null");if(s)Object.keys(S).forEach(function(k){if(s[k])S[k]=s[k]})}catch(e){}}
 function slot(path){var p=path.split("/");
+  if(p[0]==="family"){if(!S.family)S.family={};return S.family[p[1]]||(S.family[p[1]]={})}
   if(p[0]==="letters"){if(!S.letters)S.letters={};return S.letters[p[1]]||(S.letters[p[1]]={month:p[1],items:{}})}
   if(p[0]==="days"){return S.days[p[1]]||(S.days[p[1]]={date:p[1],ev:{}})}return S[p[1]]||(S[p[1]]={})}
 
@@ -354,7 +372,7 @@ function baseMs(){return birthMs()||dueMs()}
 function ageText(){var b=birthMs();if(!b)return null;var d=daysBetween(b,Date.now())+1;
   var m=0;while(addMonths(b,m+1)<=Date.now())m++;var rest=daysBetween(addMonths(b,m),Date.now());
   return {day:d,months:m,rest:rest}}
-function name(){return P().name||"우리 아기"}
+function name(){return P().name||"행복이"}
 function babyDayTag(day){var ms=parseYmd(day),b=birthMs(),due=dueMs();
   if(b){var n=daysBetween(b,ms);return n>=0?"태어난 지 "+(n+1)+"일째":"태어나기 "+(-n)+"일 전"}
   if(due){var d=daysBetween(ms,due);return d>0?"D-"+d:d===0?"출산 예정일":"예정일 D+"+(-d)}
@@ -447,7 +465,7 @@ function draw(){
   document.querySelectorAll("#tabs button").forEach(function(b){if(b.dataset.tab===tab)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
   var v=document.getElementById("view"),ae=document.activeElement;
   var keep=ae&&ae.id&&v.contains(ae)?{id:ae.id,s:ae.selectionStart,e:ae.selectionEnd}:null;
-  v.innerHTML=({home:homeView,log:logView,letter:letterView,stats:statsView,plan:planView,prep:prepView}[tab]||homeView)();
+  v.innerHTML=({home:homeView,log:logView,letter:letterView,family:familyView,stats:statsView,plan:planView,prep:prepView}[tab]||homeView)();
   if(keep){var n=document.getElementById(keep.id);if(n){n.focus();try{n.setSelectionRange(keep.s,keep.e)}catch(e){}}}
   tick();
 }
@@ -547,6 +565,50 @@ function letterHomeHtml(){var today=ymd(Date.now()),xs=letters().filter(function
   var last=letters()[0];
   return '<section class="card"><h2>오늘의 한마디 <button data-act="tab" data-tab="letter">쓰기</button></h2><div class="lstat">'+st+"</div>"+
    (last?'<div class="cell c-'+last.who+'"><div class="cw">'+WHO[last.who]+" · "+shortDate(last.t)+"</div>"+letterEntry(last).replace('<span>'+hm(last.t)+'</span>',"")+"</div>":'<div class="small muted">엄마·아빠가 아이에게 매일 한 마디씩 남겨 보세요. 나중에 아이가 읽을 수 있게 모아 둘게요.</div>')+"</section>"}
+
+/* ---------- family (가족·편집 권한) ---------- */
+var ROLE={mom:"엄마",dad:"아빠",family:"가족"};
+function famList(){var f=S.family||{};return Object.keys(f).map(function(id){return Object.assign({id:id},f[id])}).filter(function(x){return !x.del&&ROLE[x.role]}).sort(function(a,b){return (a.added||0)-(b.added||0)})}
+function myFam(){var f=U.id&&S.family&&S.family[U.id];return f&&!f.del&&ROLE[f.role]?f:null}
+function applyMyRole(){var f=myFam();if(f&&!meTouched&&(f.role==="mom"||f.role==="dad"))me=f.role}
+function refreshProfiles(ids){if(!usr||!ids.length)return;usr.profiles(ids).then(function(ps){
+  var k=JSON.stringify(ids.map(function(i){var p=ps[i]||{};return [i,p.name,p.avatarUrl,p.guest]}));if(k!==pfKey){pfKey=k;PF=ps;render()}})}
+function levelText(){if(!usr)return mode==="db"?"권한 정보를 확인할 수 없어요":"이 브라우저에만 저장하는 모드예요";
+  if(U.owner)return "소유자 · 기록, 가족 명단, 공유 설정 모두 가능";
+  if(U.edit)return "편집자(Editor) · 기록과 가족 명단 관리 가능";
+  if(U.write===true)return "기여자(Contributor) · 기록·한마디 쓰기 가능";
+  if(U.write===false)return "보기 전용 · 기록을 볼 수만 있어요";
+  return "권한 정보를 받지 못했어요 · 기록을 저장해 보면 알 수 있어요"}
+function avatar(src){return src?'<img class="av" src="'+esc(src)+'" alt="">':'<span class="av"></span>'}
+function familyView(){var list=famList(),mine=myFam(),ids=list.map(function(x){return x.id});
+  if(U.id&&ids.indexOf(U.id)<0)ids.push(U.id);refreshProfiles(ids);
+  var myName=(PF[U.id]&&PF[U.id].name)||U.name||"나";
+  var acct=usr?'<div class="mem">'+avatar(U.avatar)+'<div class="who2"><b>'+esc(myName)+'</b><span class="sub">'+levelText()+"</span></div></div>"+
+    (U.id&&U.write!==false?'<div class="field" style="margin-top:12px"><span>'+(mine?"가족 명단의 내 역할 (누르면 바로 바뀌어요)":"가족 명단에 나를 등록하세요")+"</span>"+chips("myrole",[["mom","엄마"],["dad","아빠"],["family","가족"]],mine?mine.role:"")+"</div>"+
+      (mine?"":'<div class="btnrow" style="margin-top:10px"><button class="btn primary wide" data-act="famJoin">등록하기</button></div>'):"")
+    :'<div class="small muted">claude.ai에서 이 페이지를 열었을 때 계정과 권한을 확인할 수 있어요.</div>';
+  var roster=list.length?'<ul class="mems">'+list.map(function(x){var p=PF[x.id]||{},isMe=x.id===U.id,can=U.edit||isMe;
+      var inner=avatar(p.avatarUrl)+'<div class="who2"><b>'+esc(p.name||(isMe?myName:"이름을 볼 수 없는 가족"))+(isMe?" <small>(나)</small>":"")+'</b><span class="sub">'+(p.guest?"외부 초대 · ":"")+(x.added?shortDate(x.added)+" 등록":"")+'</span></div><span class="rp c-'+x.role+'">'+ROLE[x.role]+"</span>";
+      return "<li>"+(can?'<button class="mem" data-act="famEdit" data-id="'+esc(x.id)+'">'+inner+"</button>":'<div class="mem">'+inner+"</div>")+"</li>"}).join("")+"</ul>"
+    :'<div class="empty">아직 등록한 가족이 없어요.<br>각자 이 페이지를 열고 "내 계정"에서 등록하면 여기에 모여요.</div>';
+  return '<div class="stack"><div class="daynav"><button data-act="tab" data-tab="letter" aria-label="한마디로 돌아가기">‹</button><div class="lbl">가족·편집 권한</div><span style="width:42px"></span></div>'+
+   '<div class="cols"><div class="stack"><section class="card"><h2>내 계정</h2>'+acct+"</section>"+
+   '<section class="card"><h2>가족 명단 <span class="num">'+list.length+"명</span></h2>"+roster+
+   '<p class="small muted" style="margin:10px 0 0">명단은 누가 엄마·아빠인지 표시하고, 한마디를 쓸 때 엄마/아빠를 자동으로 골라 주는 용도예요. '+(U.edit?"가족을 누르면 역할을 바꾸거나 명단에서 뺄 수 있어요. ":"")+"명단에서 빼도 페이지 접근 권한은 그대로예요.</p></section></div>"+
+   '<div class="stack"><section class="card"><h2>편집할 수 있는 사람 추가·해제</h2><ol class="steps">'+
+   "<li>이 페이지를 연 화면 위쪽의 <b>공유(Share)</b> 메뉴를 열어요. 소유자와 편집자만 열 수 있어요.</li>"+
+   "<li>가족을 이메일로 초대하고 권한을 골라요.<ul>"+
+   "<li><b>Contributor</b> · 기록·한마디 쓰기, 명단에 자기 등록 (엄마·아빠에게 추천)</li>"+
+   "<li><b>Editor</b> · 위 기능 + 가족 명단 관리</li>"+
+   "<li><b>Viewer · Commenter</b> · 보기만 가능 (조부모님께 보여 드릴 때)</li></ul></li>"+
+   "<li>초대받은 사람이 링크를 열고 이 화면에서 엄마/아빠/가족으로 등록해요.</li>"+
+   "<li>권한을 바꾸거나 없앨 때도 같은 공유 메뉴에서 해요.</li></ol>"+
+   '<div class="info" style="margin-top:12px">보안을 위해 실제 접근 권한은 claude.ai 공유 메뉴에서만 바꿀 수 있어요. 이 페이지는 가족 명단과 각자의 권한 상태를 보여 줘요.</div></section></div></div></div>'}
+function famSheet(id){var x=(S.family||{})[id];if(!x)return;var p=PF[id]||{},isMe=id===U.id;
+  openSheet("<h3>"+esc(p.name||(isMe?"나":"가족"))+'</h3><div class="field"><span>역할</span>'+chips("frole",[["mom","엄마"],["dad","아빠"],["family","가족"]],x.role)+"</div>"+
+   '<button class="btn danger" data-act="famDel">'+(isMe?"명단에서 나를 빼기":"명단에서 빼기")+"</button>"+
+   '<div class="small muted">명단에서 빼도 이 페이지에 들어오는 권한은 그대로예요. 권한은 공유 메뉴에서 해제하세요.</div>'+
+   '<div class="btnrow"><button class="btn" data-act="close">닫기</button><button class="btn primary wide" data-act="famSave">저장</button></div>',{fam:id})}
 
 /* charts */
 function barChart(title,unit,vals,labels,color,fmt){fmt=fmt||function(v){return String(v)};
@@ -697,7 +759,7 @@ function profileSheet(born){var p=P();
    '<div class="field"><span>성별</span>'+chips("sex",["여아","남아","미정"],p.sex||"미정")+"</div>"+
    '<label class="field"><span>출산 예정일</span><input type="date" id="p-due" value="'+esc(p.due||"")+'"></label>'+
    '<label class="field"><span>출생 일시 (태어난 뒤 입력)</span><input type="datetime-local" id="p-birth" value="'+esc(p.birth||(born?toLocalInput(Date.now()):""))+'"'+(born?" autofocus":"")+"></label>"+
-   '<div class="info">'+(mode==="db"?"기록은 이 페이지의 공유 저장소에 저장돼요. 배우자에게 이 페이지를 편집 권한으로 공유하면 같은 기록을 함께 보고 쓸 수 있어요.":"지금은 이 기기 브라우저에만 저장되고 있어요.")+"</div>"+
+   '<div class="info">'+(mode==="db"?"기록은 이 페이지의 공유 저장소에 저장돼요. 가족을 초대하고 권한을 관리하는 방법은 위쪽 [가족] 화면에 있어요.":"지금은 이 기기 브라우저에만 저장되고 있어요.")+"</div>"+
    (dl?'<div class="btnrow"><button class="btn wide" data-act="backup">백업 파일(JSON)</button><button class="btn wide" data-act="csv">기록 내보내기(CSV)</button></div>':"")+
    '<div class="btnrow"><button class="btn" data-act="close">닫기</button><button class="btn primary wide" data-act="saveProfile">저장</button></div>',{profile:true})}
 
@@ -733,7 +795,8 @@ var armed=null;
 document.addEventListener("click",function(ev){
   var chip=ev.target.closest(".chip");
   if(chip){var g=chip.parentNode;g.querySelectorAll(".chip").forEach(function(c){c.setAttribute("aria-pressed",c===chip?"true":"false")});
-    if(g.dataset.chips==="me"){me=chip.dataset.v;try{localStorage.setItem("bn-me",me)}catch(e){}}
+    if(g.dataset.chips==="myrole"&&myFam()&&U.id){save("family/"+U.id,{role:chip.dataset.v}).then(function(ok){if(ok)toast("역할을 바꿨어요")})}
+    if(g.dataset.chips==="me"){me=chip.dataset.v;meTouched=true;try{localStorage.setItem("bn-me",me)}catch(e){}}
     if(g.dataset.chips==="mlq"){var inp=document.getElementById("f-ml");if(inp)inp.value=chip.dataset.v}return}
   var b=ev.target.closest("[data-act]");if(!b)return;var a=b.dataset.act,now=Date.now(),t=S.timers||{};
   if(a!=="del"&&armed){armed.classList.remove("arm");armed.textContent="삭제";armed=null}
@@ -781,12 +844,18 @@ document.addEventListener("click",function(ev){
   case "prepDel":var px={};px[b.dataset.key]={del:true};save("meta/prep",{custom:px});break;
   case "backup":download("육아수첩-백업-"+ymd(now)+".json",exportJson());break;
   case "letterPost":var lt=document.getElementById("l-text"),tx=lt?lt.value.trim():"";if(!tx){toast("남길 말을 적어 주세요");break}
-    putLetter({who:me,t:now,text:tx}).then(function(ok){if(ok){draft="";try{localStorage.removeItem("bn-draft")}catch(e){}var el=document.getElementById("l-text");if(el)el.value="";toast(WHO[me]+"의 한마디를 올렸어요");render()}});break;
+    putLetter({who:me,t:now,text:tx,by:U.id||""}).then(function(ok){if(ok){draft="";try{localStorage.removeItem("bn-draft")}catch(e){}var el=document.getElementById("l-text");if(el)el.value="";toast(WHO[me]+"의 한마디를 올렸어요");render()}});break;
+  case "famJoin":var jr=chipVal("myrole");if(!jr){toast("엄마·아빠·가족 중 하나를 골라 주세요");break}if(!U.id)break;
+    save("family/"+U.id,{role:jr,added:now,del:false}).then(function(ok){if(ok){meTouched=false;toast(ROLE[jr]+"(으)로 등록했어요")}});break;
+  case "famEdit":famSheet(b.dataset.id);break;
+  case "famSave":var fid=sheetCtx&&sheetCtx.fam,fr=chipVal("frole");if(!fid||!fr)break;closeSheet();save("family/"+fid,{role:fr}).then(function(ok){if(ok)toast("저장했어요")});break;
+  case "famDel":var fd=sheetCtx&&sheetCtx.fam;if(!fd)break;
+    if(b.dataset.armed){closeSheet();save("family/"+fd,{del:true}).then(function(ok){if(ok)toast("명단에서 뺐어요")})}else{b.dataset.armed="1";b.textContent="한 번 더 누르면 빠져요"}break;
   case "letterNew":letterSheet(b.dataset.who,b.dataset.day);break;
   case "letterEdit":var lx=findLetter(b.dataset.m,b.dataset.id);if(lx)letterSheet(lx.who,ymd(lx.t),lx);break;
   case "letterSave":var ctx=sheetCtx||{},ls=document.getElementById("l-sheet").value.trim(),lw=chipVal("lwho")||me;if(!ls){toast("남길 말을 적어 주세요");break}
     var lt0=ctx.x?ctx.x.t:(ctx.day===ymd(now)?now:parseYmd(ctx.day)+12*HOUR);
-    closeSheet();putLetter({who:lw,t:lt0,text:ls},ctx.x&&ctx.x.id).then(function(ok){if(ok)toast(ctx.x?"고쳤어요":"올렸어요")});break;
+    closeSheet();putLetter({who:lw,t:lt0,text:ls,by:ctx.x?(ctx.x.by||""):(U.id||"")},ctx.x&&ctx.x.id).then(function(ok){if(ok)toast(ctx.x?"고쳤어요":"올렸어요")});break;
   case "letterDel":var lo=sheetCtx&&sheetCtx.x;if(!lo)break;
     if(b.dataset.armed){closeSheet();removeLetter(lo);toast("삭제했어요")}else{b.dataset.armed="1";b.textContent="한 번 더 누르면 삭제돼요"}break;
   case "letterMore":letterLimit+=60;render();break;
@@ -796,6 +865,7 @@ document.addEventListener("click",function(ev){
 });
 document.addEventListener("input",function(e){if(e.target.id==="l-text"){draft=e.target.value;try{localStorage.setItem("bn-draft",draft)}catch(x){}}});
 document.getElementById("tabs").addEventListener("click",function(e){var b=e.target.closest("[data-tab]");if(b)setTab(b.dataset.tab)});
+document.getElementById("familyBtn").addEventListener("click",function(){setTab("family")});
 document.getElementById("profileBtn").addEventListener("click",function(){profileSheet(false)});
 document.getElementById("nightBtn").addEventListener("click",function(){var on=document.documentElement.getAttribute("data-theme")!=="dark";setNight(on);try{localStorage.setItem("bn-night",on?"1":"0")}catch(e){}});
 function setTab(tb){tab=tb;try{localStorage.setItem("bn-tab",tb)}catch(e){}if(tb==="log")logDay=ymd(Date.now());window.scrollTo(0,0);render()}
@@ -805,7 +875,7 @@ localLoad();draw();
 var cl=window.claude;
 if(cl&&typeof cl.use==="function"){
   cl.use("db").then(function(d){if(!d)return;db=d;mode="db";
-    S={profile:{},timers:{},days:{},growth:{items:{}},vax:{done:{}},prep:{done:{},custom:{}},letters:{}};
+    S={profile:{},timers:{},days:{},growth:{items:{}},vax:{done:{}},prep:{done:{},custom:{}},letters:{},family:{}};
     var defs={profile:{},timers:{},growth:{items:{}},vax:{done:{}},prep:{done:{},custom:{}}};
     Object.keys(defs).forEach(function(k){db.doc("meta/"+k).onSnapshot(function(s){S[k]=s.exists?(s.data()||defs[k]):defs[k];render()},function(){})});
     db.collection("days").orderBy("date","desc").limit(62).onSnapshot(function(q){
@@ -815,8 +885,12 @@ if(cl&&typeof cl.use==="function"){
     db.collection("letters").orderBy("month","desc").limit(240).onSnapshot(function(q){
       q.docChanges().forEach(function(c){if(c.type==="removed")delete S.letters[c.doc.id]});
       q.docs.forEach(function(x){S.letters[x.id]=x.data()});render()},function(){});
+    db.collection("family").limit(100).onSnapshot(function(q){var f={};q.docs.forEach(function(x){f[x.id]=x.data()});S.family=f;applyMyRole();render()},function(){});
     render();
   }).catch(function(){});
+  cl.use("user").then(function(u){if(!u)return;usr=u;
+    return u.me().then(function(m){U.id=m.id;U.name=m.name;U.avatar=m.avatarUrl;U.owner=m.isOwner;U.edit=m.canEdit;return u.can("data.write")})
+      .then(function(w){U.write=w;applyMyRole();render()})}).catch(function(){});
   cl.use("downloads").then(function(x){dl=x}).catch(function(){});
 }
 })();
