@@ -16,6 +16,7 @@
 - `meta/vax` `{done:{<key>:"YYYY-MM-DD"|""}}` — 접종·검진 완료
 - `meta/prep` `{done:{<key>:bool}, custom:{<id>:{g,label,del?}}}`
 - `days/<YYYY-MM-DD>` `{date, ev:{<id>:{k,t,memo,...,del?}}}` — 하루 1문서, 이벤트는 map에 merge(`update`)로 추가해 부부 동시 기록 충돌을 피한다. 삭제는 `del:true` 톰스톤.
+- `letters/<YYYY-MM>` `{month, items:{<id>:{who:"mom"|"dad", t, text, del?}}}` — 엄마·아빠가 아이에게 남기는 한마디(한마디 탭). 한 달 1문서, `update` merge로 추가, 삭제는 톰스톤.
 - 이벤트 종류 `k`: breast(side,min) bottle(src,ml) pump(side,ml) diaper(pee,poo,color) sleep(end) bath temp(c) med(name,dose) note
 - db 한도: 아티팩트당 문서 5,000개 → 이벤트 1건=1문서로 바꾸지 말 것.
 - db를 못 쓰는 환경(파일 직접 열기)에서는 localStorage(`bn-data`)로 폴백.

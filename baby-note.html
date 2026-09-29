@@ -8,6 +8,7 @@
   --bg:#F2F5F3; --surface:#FFFFFF; --surface2:#E7EDEA; --fg:#1B2625; --muted:#5B6B68; --line:#D3DCD8;
   --accent:#2C6A69; --accent-fg:#FFFFFF;
   --feed:#B8741F; --diaper:#5A6FB8; --sleep:#4A4F99; --care:#2F8462; --warn:#B24A34;
+  --mom:#B0506A; --dad:#2D6E97;
   --f-display:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   --f-num:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
@@ -16,11 +17,11 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0E1413; --surface:#171F1E; --surface2:#202A29; --fg:#E2EAE7; --muted:#90A09C; --line:#2A3634;
   --accent:#72B5B0; --accent-fg:#0C1312;
-  --feed:#E0A25A; --diaper:#98A7E4; --sleep:#A2A8EE; --care:#6CC39A; --warn:#E6896F; color-scheme:dark}}
+  --feed:#E0A25A; --diaper:#98A7E4; --sleep:#A2A8EE; --care:#6CC39A; --warn:#E6896F; --mom:#EC98AE; --dad:#86BDE3; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0E1413; --surface:#171F1E; --surface2:#202A29; --fg:#E2EAE7; --muted:#90A09C; --line:#2A3634;
   --accent:#72B5B0; --accent-fg:#0C1312;
-  --feed:#E0A25A; --diaper:#98A7E4; --sleep:#A2A8EE; --care:#6CC39A; --warn:#E6896F; color-scheme:dark}
+  --feed:#E0A25A; --diaper:#98A7E4; --sleep:#A2A8EE; --care:#6CC39A; --warn:#E6896F; --mom:#EC98AE; --dad:#86BDE3; color-scheme:dark}
 
 *{box-sizing:border-box}
 html,body{background:var(--bg);color:var(--fg)}
@@ -37,7 +38,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .iconbtn{height:38px;padding-inline:12px;border-radius:999px;background:var(--surface2);font-size:.85rem;font-weight:500}
 .iconbtn[aria-pressed="true"]{background:var(--sleep);color:var(--bg)}
 
-.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(5,1fr);
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(6,1fr);
   background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
 .tabs button{padding:10px 2px 12px;font-size:.8rem;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:4px}
 .tabs button::before{content:"";width:22px;height:4px;border-radius:4px;background:transparent}
@@ -45,10 +46,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .tabs button[aria-current="page"]::before{background:var(--accent)}
 
 @media (min-width:760px){
-  .app{display:grid;grid-template-columns:96px minmax(0,1fr);column-gap:24px;padding-block:20px 40px}
+  .app{display:grid;grid-template-columns:112px minmax(0,1fr);column-gap:24px;padding-block:20px 40px}
   .top{grid-column:1 / -1}
   .tabs{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);align-self:start;grid-template-columns:1fr;border:0;background:none;padding:0;gap:4px}
-  .tabs button{flex-direction:row;justify-content:flex-start;padding:10px 12px;border-radius:10px;font-size:.92rem}
+  .tabs button{flex-direction:row;justify-content:flex-start;padding:10px 12px;border-radius:10px;font-size:.92rem;white-space:nowrap}
   .tabs button::before{width:4px;height:18px}
   .tabs button[aria-current="page"]{background:var(--surface)}
 }
@@ -78,7 +79,7 @@ main{min-width:0}
   display:flex;flex-direction:column;align-items:center;gap:6px;font-size:.86rem;font-weight:500;min-height:74px;justify-content:center}
 .qa i{width:12px;height:12px;border-radius:50%;background:var(--c)}
 .qa:active{transform:scale(.97)}
-.c-feed{--c:var(--feed)}.c-diaper{--c:var(--diaper)}.c-sleep{--c:var(--sleep)}.c-care{--c:var(--care)}.c-muted{--c:var(--muted)}
+.c-mom{--c:var(--mom)}.c-dad{--c:var(--dad)}.c-feed{--c:var(--feed)}.c-diaper{--c:var(--diaper)}.c-sleep{--c:var(--sleep)}.c-care{--c:var(--care)}.c-muted{--c:var(--muted)}
 
 /* timers */
 .timer{--c:var(--feed);border:2px solid var(--c);background:color-mix(in srgb,var(--c) 10%,var(--surface));border-radius:var(--r);padding:14px 16px;display:grid;gap:10px}
@@ -168,6 +169,23 @@ td:first-child{font-family:var(--f-body)}
 .bar{height:6px;border-radius:6px;background:var(--surface2);overflow:hidden;margin-top:4px}
 .bar i{display:block;height:100%;background:var(--care);border-radius:6px}
 
+/* letters */
+.field textarea.long{height:120px}
+.lday .lhd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px}
+.lday .lhd b{font-weight:600}
+.lday .lhd span{font-size:.8rem;color:var(--muted)}
+.pair{display:grid;gap:8px}
+@media (min-width:520px){.pair{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.cell{border-left:3px solid var(--c);background:color-mix(in srgb,var(--c) 8%,var(--surface));border-radius:0 10px 10px 0;padding:8px 10px;display:grid;gap:8px;align-content:start;min-width:0}
+.cell .cw{font-size:.78rem;font-weight:600;color:var(--c);letter-spacing:.04em}
+.lt{text-align:left;display:grid;gap:2px;min-width:0;padding:0}
+.lt p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--f-display);font-size:1.02rem;line-height:1.55}
+.lt span{font-family:var(--f-num);font-size:.75rem;color:var(--muted)}
+.cell .add{justify-self:start;font-size:.82rem;color:var(--muted);padding:2px 0}
+.lstat{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.lstat span{font-size:.8rem;font-weight:600;padding:3px 10px;border-radius:999px;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c)}
+.lstat span.no{background:var(--surface2);color:var(--muted)}
+
 /* sheet */
 .sheet{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center}
 .sheet .scrim{position:absolute;inset:0;background:rgba(0,0,0,.42)}
@@ -203,6 +221,7 @@ td:first-child{font-family:var(--f-body)}
   <nav class="tabs" id="tabs" aria-label="메뉴">
     <button data-tab="home">홈</button>
     <button data-tab="log">기록</button>
+    <button data-tab="letter">한마디</button>
     <button data-tab="stats">통계·성장</button>
     <button data-tab="plan">접종·검진</button>
     <button data-tab="prep">출산 준비</button>
@@ -216,9 +235,11 @@ td:first-child{font-family:var(--f-body)}
 (function(){
 "use strict";
 var MIN=60000, HOUR=3600000, DAYMS=86400000;
-var S={profile:{},timers:{},days:{},growth:{items:{}},vax:{done:{}},prep:{done:{},custom:{}}};
+var S={profile:{},timers:{},days:{},growth:{items:{}},vax:{done:{}},prep:{done:{},custom:{}},letters:{}};
 var db=null, dl=null, mode="local", tab="home", logDay=ymd(Date.now());
 try{var t0=localStorage.getItem("bn-tab"); if(t0) tab=t0;}catch(e){}
+var me="mom",draft="",letterLimit=60;
+try{var m0=localStorage.getItem("bn-me"); if(m0==="dad"||m0==="mom") me=m0; draft=localStorage.getItem("bn-draft")||"";}catch(e){}
 try{var th=localStorage.getItem("bn-night"); if(th==="1") setNight(true);}catch(e){}
 
 /* ---------- utils ---------- */
@@ -253,7 +274,9 @@ function setNight(on){var r=document.documentElement;if(on)r.setAttribute("data-
 /* ---------- storage ---------- */
 function localSave(){try{localStorage.setItem("bn-data",JSON.stringify(S))}catch(e){}}
 function localLoad(){try{var s=JSON.parse(localStorage.getItem("bn-data")||"null");if(s)Object.keys(S).forEach(function(k){if(s[k])S[k]=s[k]})}catch(e){}}
-function slot(path){var p=path.split("/");if(p[0]==="days"){return S.days[p[1]]||(S.days[p[1]]={date:p[1],ev:{}})}return S[p[1]]||(S[p[1]]={})}
+function slot(path){var p=path.split("/");
+  if(p[0]==="letters"){if(!S.letters)S.letters={};return S.letters[p[1]]||(S.letters[p[1]]={month:p[1],items:{}})}
+  if(p[0]==="days"){return S.days[p[1]]||(S.days[p[1]]={date:p[1],ev:{}})}return S[p[1]]||(S[p[1]]={})}
 
 var readOnly=false;
 function save(path,patch,base){
@@ -314,6 +337,15 @@ function dayStats(day){var s={feeds:0,ml:0,bmin:0,diapers:0,poo:0,sleep:0,pump:0
     if(e.k==="sleep"&&e.end){s.sleep+=Math.round((e.end-e.t)/MIN)}
   });return s}
 
+/* ---------- letters (엄마·아빠의 한마디) ---------- */
+var WHO={mom:"엄마",dad:"아빠"};
+function letters(){var out=[];Object.keys(S.letters||{}).forEach(function(m){var it=(S.letters[m]&&S.letters[m].items)||{};
+  Object.keys(it).forEach(function(id){var x=it[id];if(x&&!x.del&&x.text&&WHO[x.who])out.push(Object.assign({id:id,m:m},x))})});
+  return out.sort(function(a,b){return b.t-a.t})}
+function putLetter(x,id){var m=ymd(x.t).slice(0,7);var o={};o[id||uid()]=x;return save("letters/"+m,{items:o},{month:m})}
+function removeLetter(l){var o={};o[l.id]={del:true};return save("letters/"+l.m,{items:o},{month:l.m})}
+function findLetter(m,id){return letters().filter(function(x){return x.m===m&&x.id===id})[0]}
+
 /* ---------- baby profile ---------- */
 function P(){return S.profile||{}}
 function birthMs(){return P().birth?fromLocalInput(P().birth):null}
@@ -323,6 +355,10 @@ function ageText(){var b=birthMs();if(!b)return null;var d=daysBetween(b,Date.no
   var m=0;while(addMonths(b,m+1)<=Date.now())m++;var rest=daysBetween(addMonths(b,m),Date.now());
   return {day:d,months:m,rest:rest}}
 function name(){return P().name||"우리 아기"}
+function babyDayTag(day){var ms=parseYmd(day),b=birthMs(),due=dueMs();
+  if(b){var n=daysBetween(b,ms);return n>=0?"태어난 지 "+(n+1)+"일째":"태어나기 "+(-n)+"일 전"}
+  if(due){var d=daysBetween(ms,due);return d>0?"D-"+d:d===0?"출산 예정일":"예정일 D+"+(-d)}
+  return ""}
 
 /* ---------- schedules (KDCA 국가예방접종 표준일정 요약) ---------- */
 var VAX=[
@@ -409,8 +445,10 @@ function draw(){
   else sub="설정에서 출산 예정일을 입력해 주세요";
   document.getElementById("babyAge").textContent=sub;
   document.querySelectorAll("#tabs button").forEach(function(b){if(b.dataset.tab===tab)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
-  var v=document.getElementById("view");
-  v.innerHTML=({home:homeView,log:logView,stats:statsView,plan:planView,prep:prepView}[tab]||homeView)();
+  var v=document.getElementById("view"),ae=document.activeElement;
+  var keep=ae&&ae.id&&v.contains(ae)?{id:ae.id,s:ae.selectionStart,e:ae.selectionEnd}:null;
+  v.innerHTML=({home:homeView,log:logView,letter:letterView,stats:statsView,plan:planView,prep:prepView}[tab]||homeView)();
+  if(keep){var n=document.getElementById(keep.id);if(n){n.focus();try{n.setSelectionRange(keep.s,keep.e)}catch(e){}}}
   tick();
 }
 
@@ -470,7 +508,7 @@ function tlRow(e){var f=flags(e);return '<li style="--c:var(--'+T[e.k].c+')"><sp
   '<button class="del" data-act="del" data-day="'+e.day+'" data-id="'+e.id+'">삭제</button></li>'}
 
 function homeView(){var recent=allEvs().slice(0,6);
-  return '<div class="cols"><div class="stack">'+heroHtml()+timersHtml()+quickHtml()+'</div><div class="stack">'+sinceHtml()+todayHtml()+upcomingHtml()+
+  return '<div class="cols"><div class="stack">'+heroHtml()+timersHtml()+quickHtml()+'</div><div class="stack">'+sinceHtml()+todayHtml()+letterHomeHtml()+upcomingHtml()+
    '<section class="card"><h2>최근 기록 <button data-act="tab" data-tab="log">전체</button></h2>'+
    (recent.length?'<ul class="tl">'+recent.map(tlRow).join("")+"</ul>":'<div class="empty">아직 기록이 없어요. 위의 빠른 기록 버튼을 누르면 여기에 쌓여요.</div>')+"</section>"+
    modeNote()+"</div></div>"}
@@ -487,6 +525,28 @@ function logView(){var list=evs(logDay);var isToday=logDay===ymd(Date.now());
    "</b><span>기저귀</span></div><div><b>"+(Math.floor(s.sleep/60)+":"+pad(s.sleep%60))+"</b><span>수면</span></div></div></section>"+
    '<section class="card"><h2>타임라인 <button data-act="add" data-k="pick">+ 기록 추가</button></h2>'+
    (list.length?'<ul class="tl">'+list.map(tlRow).join("")+"</ul>":'<div class="empty">이날 기록이 없어요.</div>')+"</section></div>"}
+
+function letterEntry(x){return '<button class="lt" data-act="letterEdit" data-m="'+x.m+'" data-id="'+x.id+'"><p>'+esc(x.text)+"</p><span>"+hm(x.t)+"</span></button>"}
+function letterView(){var all=letters(),byDay={},today=ymd(Date.now());
+  all.forEach(function(x){var d=ymd(x.t);(byDay[d]=byDay[d]||[]).push(x)});if(!byDay[today])byDay[today]=[];
+  var days=Object.keys(byDay).sort().reverse(),cnt={mom:0,dad:0};all.forEach(function(x){cnt[x.who]++});
+  var tag=babyDayTag(today);
+  return '<div class="stack"><section class="card"><h2>'+esc(name())+"에게 남기는 오늘의 한마디</h2>"+
+   '<div class="stack" style="gap:10px"><div class="field"><span>누가 쓰나요</span>'+chips("me",[["mom","엄마"],["dad","아빠"]],me)+"</div>"+
+   '<label class="field"><span>'+dayLabel(today)+(tag?" · "+tag:"")+'</span><textarea class="long" id="l-text" maxlength="1000" placeholder="오늘 아이에게 하고 싶은 말을 한 마디나 몇 문장으로 남겨 보세요">'+esc(draft)+"</textarea></label>"+
+   '<div class="btnrow"><button class="btn primary wide" data-act="letterPost">올리기</button></div></div></section>'+
+   '<p class="small muted" style="margin:0">지금까지 엄마 '+cnt.mom+"개 · 아빠 "+cnt.dad+"개의 한마디가 쌓였어요."+(dl&&all.length?' <button class="small" style="color:var(--accent);font-weight:600" data-act="letterTxt">텍스트로 저장</button>':"")+"</p>"+
+   days.slice(0,letterLimit).map(function(d){var t2=babyDayTag(d);
+    return '<section class="card lday"><div class="lhd"><b>'+dayLabel(d)+"</b><span>"+t2+'</span></div><div class="pair">'+["mom","dad"].map(function(w){
+      var xs=byDay[d].filter(function(x){return x.who===w}).sort(function(a,b){return a.t-b.t});
+      return '<div class="cell c-'+w+'"><div class="cw">'+WHO[w]+"</div>"+xs.map(letterEntry).join("")+
+        '<button class="add" data-act="letterNew" data-who="'+w+'" data-day="'+d+'">'+(xs.length?"+ 더 남기기":"+ 한마디 남기기")+"</button></div>"}).join("")+"</div></section>"}).join("")+
+   (days.length>letterLimit?'<button class="btn" data-act="letterMore">이전 기록 더 보기</button>':"")+"</div>"}
+function letterHomeHtml(){var today=ymd(Date.now()),xs=letters().filter(function(x){return ymd(x.t)===today});
+  var st=["mom","dad"].map(function(w){var ok=xs.some(function(x){return x.who===w});return '<span class="c-'+w+(ok?"":" no")+'">'+WHO[w]+" · "+(ok?"남겼어요":"아직이에요")+"</span>"}).join("");
+  var last=letters()[0];
+  return '<section class="card"><h2>오늘의 한마디 <button data-act="tab" data-tab="letter">쓰기</button></h2><div class="lstat">'+st+"</div>"+
+   (last?'<div class="cell c-'+last.who+'"><div class="cw">'+WHO[last.who]+" · "+shortDate(last.t)+"</div>"+letterEntry(last).replace('<span>'+hm(last.t)+'</span>',"")+"</div>":'<div class="small muted">엄마·아빠가 아이에게 매일 한 마디씩 남겨 보세요. 나중에 아이가 읽을 수 있게 모아 둘게요.</div>')+"</section>"}
 
 /* charts */
 function barChart(title,unit,vals,labels,color,fmt){fmt=fmt||function(v){return String(v)};
@@ -641,6 +701,13 @@ function profileSheet(born){var p=P();
    (dl?'<div class="btnrow"><button class="btn wide" data-act="backup">백업 파일(JSON)</button><button class="btn wide" data-act="csv">기록 내보내기(CSV)</button></div>':"")+
    '<div class="btnrow"><button class="btn" data-act="close">닫기</button><button class="btn primary wide" data-act="saveProfile">저장</button></div>',{profile:true})}
 
+function letterSheet(w,day,x){var tag=babyDayTag(day);
+  openSheet("<h3>"+(x?"한마디 고치기":"아이에게 한마디")+'</h3><div class="info">'+dayLabel(day)+(tag?" · "+tag:"")+"</div>"+
+   '<div class="field"><span>누가</span>'+chips("lwho",[["mom","엄마"],["dad","아빠"]],w)+"</div>"+
+   '<label class="field"><span>'+esc(name())+'에게</span><textarea class="long" id="l-sheet" maxlength="1000" autofocus>'+esc(x?x.text:"")+"</textarea></label>"+
+   (x?'<button class="btn danger" data-act="letterDel">이 한마디 삭제</button>':"")+
+   '<div class="btnrow"><button class="btn" data-act="close">닫기</button><button class="btn primary wide" data-act="letterSave">'+(x?"수정 저장":"올리기")+"</button></div>",{letter:true,day:day,x:x})}
+
 function growthSheet(){openSheet('<h3>성장 측정 추가</h3><label class="field"><span>측정일</span><input type="date" id="g-d" value="'+ymd(Date.now())+'"></label>'+
   '<div class="three"><label class="field"><span>체중 kg</span><input type="number" step="0.01" inputmode="decimal" id="g-w" autofocus></label><label class="field"><span>키 cm</span><input type="number" step="0.1" inputmode="decimal" id="g-h"></label><label class="field"><span>머리둘레 cm</span><input type="number" step="0.1" inputmode="decimal" id="g-hc"></label></div>'+
   '<div class="btnrow"><button class="btn" data-act="close">닫기</button><button class="btn primary wide" data-act="saveGrowth">저장</button></div>')}
@@ -652,7 +719,11 @@ function schedSheet(key){var it=schedItems().filter(function(x){return x.key===k
    '<button class="btn primary wide" data-act="schedDone" data-key="'+key+'">완료로 기록</button></div>')}
 
 /* ---------- export ---------- */
-function exportJson(){return JSON.stringify({exported:new Date().toISOString(),profile:S.profile,days:S.days,growth:S.growth,vax:S.vax,prep:S.prep},null,1)}
+function exportJson(){return JSON.stringify({exported:new Date().toISOString(),profile:S.profile,days:S.days,growth:S.growth,vax:S.vax,prep:S.prep,letters:S.letters},null,1)}
+function exportLetters(){var out=[name()+"에게 남긴 엄마·아빠의 한마디"],cur="";
+  letters().slice().reverse().forEach(function(x){var d=ymd(x.t);if(d!==cur){cur=d;var tg=babyDayTag(d);out.push("","■ "+dotDate(x.t)+(tg?" · "+tg:""))}
+    out.push("["+WHO[x.who]+" "+hm(x.t)+"] "+x.text)});
+  return "\ufeff"+out.join("\n")+"\n"}
 function exportCsv(){var rows=[["날짜","시간","종류","상세","메모"]];allEvs().slice().reverse().forEach(function(e){rows.push([e.day,hm(e.t),T[e.k].name,detail(e),e.memo||""])});
   return "﻿"+rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(",")}).join("\n")}
 function download(name,data){if(!dl)return;dl.save({filename:name,data:data}).then(function(){toast("저장했어요")}).catch(function(e){if(e&&e.code!=="declined")toast("파일을 저장하지 못했어요")})}
@@ -662,6 +733,7 @@ var armed=null;
 document.addEventListener("click",function(ev){
   var chip=ev.target.closest(".chip");
   if(chip){var g=chip.parentNode;g.querySelectorAll(".chip").forEach(function(c){c.setAttribute("aria-pressed",c===chip?"true":"false")});
+    if(g.dataset.chips==="me"){me=chip.dataset.v;try{localStorage.setItem("bn-me",me)}catch(e){}}
     if(g.dataset.chips==="mlq"){var inp=document.getElementById("f-ml");if(inp)inp.value=chip.dataset.v}return}
   var b=ev.target.closest("[data-act]");if(!b)return;var a=b.dataset.act,now=Date.now(),t=S.timers||{};
   if(a!=="del"&&armed){armed.classList.remove("arm");armed.textContent="삭제";armed=null}
@@ -708,9 +780,21 @@ document.addEventListener("click",function(ev){
   case "prepSave":var l=document.getElementById("pa-l").value.trim();if(!l){toast("항목 이름을 입력해 주세요");break}var pc={};pc[uid()]={g:Number(b.dataset.g),label:l};closeSheet();save("meta/prep",{custom:pc});break;
   case "prepDel":var px={};px[b.dataset.key]={del:true};save("meta/prep",{custom:px});break;
   case "backup":download("육아수첩-백업-"+ymd(now)+".json",exportJson());break;
+  case "letterPost":var lt=document.getElementById("l-text"),tx=lt?lt.value.trim():"";if(!tx){toast("남길 말을 적어 주세요");break}
+    putLetter({who:me,t:now,text:tx}).then(function(ok){if(ok){draft="";try{localStorage.removeItem("bn-draft")}catch(e){}var el=document.getElementById("l-text");if(el)el.value="";toast(WHO[me]+"의 한마디를 올렸어요");render()}});break;
+  case "letterNew":letterSheet(b.dataset.who,b.dataset.day);break;
+  case "letterEdit":var lx=findLetter(b.dataset.m,b.dataset.id);if(lx)letterSheet(lx.who,ymd(lx.t),lx);break;
+  case "letterSave":var ctx=sheetCtx||{},ls=document.getElementById("l-sheet").value.trim(),lw=chipVal("lwho")||me;if(!ls){toast("남길 말을 적어 주세요");break}
+    var lt0=ctx.x?ctx.x.t:(ctx.day===ymd(now)?now:parseYmd(ctx.day)+12*HOUR);
+    closeSheet();putLetter({who:lw,t:lt0,text:ls},ctx.x&&ctx.x.id).then(function(ok){if(ok)toast(ctx.x?"고쳤어요":"올렸어요")});break;
+  case "letterDel":var lo=sheetCtx&&sheetCtx.x;if(!lo)break;
+    if(b.dataset.armed){closeSheet();removeLetter(lo);toast("삭제했어요")}else{b.dataset.armed="1";b.textContent="한 번 더 누르면 삭제돼요"}break;
+  case "letterMore":letterLimit+=60;render();break;
+  case "letterTxt":download("아이에게-한마디-"+ymd(now)+".txt",exportLetters());break;
   case "csv":download("육아기록-"+ymd(now)+".csv",exportCsv());break;
   }
 });
+document.addEventListener("input",function(e){if(e.target.id==="l-text"){draft=e.target.value;try{localStorage.setItem("bn-draft",draft)}catch(x){}}});
 document.getElementById("tabs").addEventListener("click",function(e){var b=e.target.closest("[data-tab]");if(b)setTab(b.dataset.tab)});
 document.getElementById("profileBtn").addEventListener("click",function(){profileSheet(false)});
 document.getElementById("nightBtn").addEventListener("click",function(){var on=document.documentElement.getAttribute("data-theme")!=="dark";setNight(on);try{localStorage.setItem("bn-night",on?"1":"0")}catch(e){}});
@@ -721,13 +805,16 @@ localLoad();draw();
 var cl=window.claude;
 if(cl&&typeof cl.use==="function"){
   cl.use("db").then(function(d){if(!d)return;db=d;mode="db";
-    S={profile:{},timers:{},days:{},growth:{items:{}},vax:{done:{}},prep:{done:{},custom:{}}};
+    S={profile:{},timers:{},days:{},growth:{items:{}},vax:{done:{}},prep:{done:{},custom:{}},letters:{}};
     var defs={profile:{},timers:{},growth:{items:{}},vax:{done:{}},prep:{done:{},custom:{}}};
     Object.keys(defs).forEach(function(k){db.doc("meta/"+k).onSnapshot(function(s){S[k]=s.exists?(s.data()||defs[k]):defs[k];render()},function(){})});
     db.collection("days").orderBy("date","desc").limit(62).onSnapshot(function(q){
       q.docChanges().forEach(function(c){if(c.type==="removed")delete S.days[c.doc.id]});
       q.docs.forEach(function(x){S.days[x.id]=x.data()});
       windowOldest=q.size>=62?q.docs[q.size-1].id:null;render()},function(){toast("기록을 불러오지 못했어요. 새로고침해 주세요")});
+    db.collection("letters").orderBy("month","desc").limit(240).onSnapshot(function(q){
+      q.docChanges().forEach(function(c){if(c.type==="removed")delete S.letters[c.doc.id]});
+      q.docs.forEach(function(x){S.letters[x.id]=x.data()});render()},function(){});
     render();
   }).catch(function(){});
   cl.use("downloads").then(function(x){dl=x}).catch(function(){});
